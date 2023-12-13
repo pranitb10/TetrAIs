@@ -74,9 +74,9 @@ class TetrisGreedy(TetrisApp):
 
         if not self.gameOver:
             for _ in range(bestAction[0]):
-                self.rotate_stone()
+                self.rotateStone()
             self.move(bestAction[1] - self.stone_x)
-            self.insta_drop()
+            self.instantDrop()
 
 
 if __name__ == '__main__':

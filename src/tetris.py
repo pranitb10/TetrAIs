@@ -2,7 +2,7 @@ from random import randrange as rand
 import pygame, sys
 
 # Initial Game config/state
-cell_size = 18
+cellSize = 18
 cols = 10
 rows = 22
 maxFps = 30
@@ -20,7 +20,7 @@ colors = [
     (35, 35, 35)
 ]
 
-tetris_shapes = [
+tetrisShapes = [
     [[1, 1, 1],
      [0, 1, 0]],
 
@@ -43,13 +43,13 @@ tetris_shapes = [
 ]
 
 
-def rotate_clockwise(shape):
+def rotateClockwise(shape):
     return [[shape[y][x]
              for y in range(len(shape))]
             for x in range(len(shape[0]) - 1, -1, -1)]
 
 
-def check_collision(board, shape, offset):
+def checkCollision(board, shape, offset):
     off_x, off_y = offset
     for cy, row in enumerate(shape):
         for cx, cell in enumerate(row):
@@ -61,12 +61,12 @@ def check_collision(board, shape, offset):
     return False
 
 
-def remove_row(board, row):
+def removeRow(board, row):
     del board[row]
     return [[0 for i in range(cols)]] + board
 
 
-def join_matrices(mat1, mat2, mat2_off):
+def joinMatrices(mat1, mat2, mat2_off):
     off_x, off_y = mat2_off
     for cy, row in enumerate(mat2):
         for cx, val in enumerate(row):
@@ -74,7 +74,7 @@ def join_matrices(mat1, mat2, mat2_off):
     return mat1
 
 
-def new_board():
+def newBoard():
     board = [[0 for x in range(cols)]
              for y in range(rows)]
     board += [[1 for x in range(cols)]]
@@ -94,9 +94,9 @@ class TetrisApp(object):
         self.stone = None
         pygame.init()
         pygame.key.set_repeat(250, 25)
-        self.width = cell_size * (cols + 6)
-        self.height = cell_size * rows
-        self.rlim = cell_size * cols
+        self.width = cellSize * (cols + 6)
+        self.height = cellSize * rows
+        self.rlim = cellSize * cols
         self.bground_grid = [[8 if x % 2 == y % 2 else 0 for x in range(cols)] for y in range(rows)]
 
         self.default_font = pygame.font.Font(
@@ -105,24 +105,24 @@ class TetrisApp(object):
         self.screen = pygame.display.set_mode((self.width, self.height))
         pygame.event.set_blocked(pygame.MOUSEMOTION)
 
-        self.next_stone = tetris_shapes[rand(len(tetris_shapes))]
+        self.next_stone = tetrisShapes[rand(len(tetrisShapes))]
         self.init_game()
 
     def new_stone(self):
         self.stone = self.next_stone[:]
-        self.next_stone = tetris_shapes[rand(len(tetris_shapes))]
+        self.next_stone = tetrisShapes[rand(len(tetrisShapes))]
         self.stone_x = int(cols / 2 - len(self.stone[0]) / 2)
         self.stone_y = 0
 
-        if check_collision(self.board,
-                           self.stone,
-                           (self.stone_x, self.stone_y)):
+        if checkCollision(self.board,
+                          self.stone,
+                          (self.stone_x, self.stone_y)):
             self.gameOver = True
         self.score += 1
 
     def init_game(self):
         pygame.time.set_timer(pygame.USEREVENT + 1, 750)
-        self.board = new_board()
+        self.board = newBoard()
         self.level = 1
         self.score = 0
         self.lines = 0
@@ -130,7 +130,7 @@ class TetrisApp(object):
         self.paused = False
         self.new_stone()
 
-    def disp_msg(self, msg, topLeft):
+    def displayMessage(self, msg, topLeft):
         x, y = topLeft
         for line in msg.splitlines():
             self.screen.blit(
@@ -142,7 +142,7 @@ class TetrisApp(object):
                 (x, y))
             y += 14
 
-    def center_msg(self, msg):
+    def centerMessage(self, msg):
         for i, line in enumerate(msg.splitlines()):
             msg_image = self.default_font.render(line, False,
                                                  (255, 255, 255), (0, 0, 0))
@@ -155,7 +155,7 @@ class TetrisApp(object):
                 self.width // 2 - msg_image_center_x,
                 self.height // 2 - msg_image_center_y + i * 22))
 
-    def draw_matrix(self, matrix, offset):
+    def drawMatrix(self, matrix, offset):
         off_x, off_y = offset
         for y, row in enumerate(matrix):
             for x, val in enumerate(row):
@@ -165,13 +165,13 @@ class TetrisApp(object):
                         colors[val],
                         pygame.Rect(
                             (off_x + x) *
-                            cell_size,
+                            cellSize,
                             (off_y + y) *
-                            cell_size,
-                            cell_size,
-                            cell_size), 0)
+                            cellSize,
+                            cellSize,
+                            cellSize), 0)
 
-    def add_cl_lines(self, n):
+    def addClLines(self, n):
         lineScores = [0, 40, 100, 300, 1200]
         self.lines += n
         self.score += lineScores[n]
@@ -183,13 +183,13 @@ class TetrisApp(object):
                 new_x = 0
             if new_x > cols - len(self.stone[0]):
                 new_x = cols - len(self.stone[0])
-            if not check_collision(self.board,
-                                   self.stone,
-                                   (new_x, self.stone_y)):
+            if not checkCollision(self.board,
+                                  self.stone,
+                                  (new_x, self.stone_y)):
                 self.stone_x = new_x
 
     def quit(self):
-        self.center_msg("Exiting...")
+        self.centerMessage("Exiting...")
         pygame.display.update()
         sys.exit()
 
@@ -197,10 +197,10 @@ class TetrisApp(object):
         if not self.gameOver and not self.paused:
             # self.score += 1 if manual else 0
             self.stone_y += 1
-            if check_collision(self.board,
-                               self.stone,
-                               (self.stone_x, self.stone_y)):
-                self.board = join_matrices(
+            if checkCollision(self.board,
+                              self.stone,
+                              (self.stone_x, self.stone_y)):
+                self.board = joinMatrices(
                     self.board,
                     self.stone,
                     (self.stone_x, self.stone_y))
@@ -208,34 +208,34 @@ class TetrisApp(object):
                 while True:
                     for i, row in enumerate(self.board[:-1]):
                         if 0 not in row:
-                            self.board = remove_row(
+                            self.board = removeRow(
                                 self.board, i)
                             cleared_rows += 1
                             break
                     else:
                         break
-                self.add_cl_lines(cleared_rows)
+                self.addClLines(cleared_rows)
                 self.new_stone()
                 return True
         return False
 
-    def insta_drop(self):
+    def instantDrop(self):
         if not self.gameOver and not self.paused:
             while not self.drop(True):
                 pass
 
-    def rotate_stone(self):
+    def rotateStone(self):
         if not self.gameOver and not self.paused:
-            new_stone = rotate_clockwise(self.stone)
-            if not check_collision(self.board,
-                                   new_stone,
-                                   (self.stone_x, self.stone_y)):
+            new_stone = rotateClockwise(self.stone)
+            if not checkCollision(self.board,
+                                  new_stone,
+                                  (self.stone_x, self.stone_y)):
                 self.stone = new_stone
 
-    def toggle_pause(self):
+    def togglePause(self):
         self.paused = not self.paused
 
-    def start_game(self):
+    def startGame(self):
         if self.gameOver:
             self.init_game()
             self.gameOver = False
@@ -246,10 +246,10 @@ class TetrisApp(object):
             'LEFT': lambda: self.move(-1),
             'RIGHT': lambda: self.move(+1),
             'DOWN': lambda: self.drop(True),
-            'UP': self.rotate_stone,
-            'p': self.toggle_pause,
-            'SPACE': self.start_game,
-            'RETURN': self.insta_drop
+            'UP': self.rotateStone,
+            'p': self.togglePause,
+            'SPACE': self.startGame,
+            'RETURN': self.instantDrop
         }
 
         self.gameOver = False
@@ -259,23 +259,23 @@ class TetrisApp(object):
         while 1:
             self.screen.fill((0, 0, 0))
             if self.gameOver:
-                self.center_msg("Game Over!\nYour score: %d\nPress space to continue" % self.score)
+                self.centerMessage("Game Over!\nYour score: %d\nPress space to continue" % self.score)
             else:
                 pygame.draw.line(self.screen,
                                  (255, 255, 255),
                                  (self.rlim + 1, 0),
                                  (self.rlim + 1, self.height - 1))
-                self.disp_msg("Next:", (
-                    self.rlim + cell_size,
+                self.displayMessage("Next:", (
+                    self.rlim + cellSize,
                     2))
-                self.disp_msg("Score: %d\n\nLevel: %d\nLines: %d" % (self.score, self.level, self.lines),
-                              (self.rlim + cell_size, cell_size * 5))
-                self.draw_matrix(self.bground_grid, (0, 0))
-                self.draw_matrix(self.board, (0, 0))
-                self.draw_matrix(self.stone,
-                                 (self.stone_x, self.stone_y))
-                self.draw_matrix(self.next_stone,
-                                 (cols + 1, 2))
+                self.displayMessage("Score: %d\n\nLevel: %d\nLines: %d" % (self.score, self.level, self.lines),
+                                    (self.rlim + cellSize, cellSize * 5))
+                self.drawMatrix(self.bground_grid, (0, 0))
+                self.drawMatrix(self.board, (0, 0))
+                self.drawMatrix(self.stone,
+                                (self.stone_x, self.stone_y))
+                self.drawMatrix(self.next_stone,
+                                (cols + 1, 2))
             pygame.display.update()
 
             for event in pygame.event.get():
@@ -292,7 +292,7 @@ class TetrisApp(object):
             prevent_cpu_burnout.tick(maxFps)
 
     def bestMoves(self):
-        self.insta_drop()
+        self.instantDrop()
 
 
 if __name__ == '__main__':

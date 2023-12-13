@@ -2,7 +2,7 @@ from tetris import TetrisApp
 from state import *
 
 
-class NGreedy(object):
+class depthLimitedGreedy(object):
 
     def __init__(self, state):
         self.board = state.board
@@ -65,7 +65,7 @@ def oneBestMove(state):
             action = (rotateN, x)
             nextStates = state.nextStates(action)
             if len(nextStates):
-                score = NGreedy(nextStates[0]).score
+                score = depthLimitedGreedy(nextStates[0]).score
                 if score > bestScore:
                     bestScore, bestAction = score, action
     return bestScore
@@ -87,9 +87,9 @@ class TetrisGreedy(TetrisApp):
 
         if not self.gameOver:
             for _ in range(bestAction[0]):
-                self.rotate_stone()
+                self.rotateStone()
             self.move(bestAction[1] - self.stone_x)
-            self.insta_drop()
+            self.instantDrop()
 
 
 if __name__ == '__main__':

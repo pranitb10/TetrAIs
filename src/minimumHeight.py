@@ -13,7 +13,7 @@ class TetrisGreedy(TetrisApp):
                 x, low = j, i
 
         self.move(x - self.stone_x)
-        self.insta_drop()
+        self.instantDrop()
 
 
 if __name__ == '__main__':

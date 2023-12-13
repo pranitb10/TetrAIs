@@ -8,7 +8,7 @@ qValues = {}
 weights = [1, -1, -1, -1, -1]
 
 
-class RL(object):
+class QL(object):
 
     def __init__(self, state):
         self.state = state
@@ -88,14 +88,14 @@ class TetrisRL(TetrisApp):
             if len(nextStates):
                 nextState = nextStates[0]
                 for i, w in enumerate(weights):
-                    weights[i] += ALPHA * (nextState.score + RL(nextState).evaluate() - RL(initState).evaluate())
+                    weights[i] += ALPHA * (nextState.score + QL(nextState).evaluate() - QL(initState).evaluate())
         else:
             for rotateN in range(4):
                 for x in range(COLS):
                     action = (rotateN, x)
                     nextStates = initState.nextStates(action)
                     if len(nextStates):
-                        score = RL(nextStates[0]).score
+                        score = QL(nextStates[0]).score
                         if score > bestScore:
                             bestScore, bestAction = score, action
 
@@ -103,7 +103,7 @@ class TetrisRL(TetrisApp):
             if len(nextStates):
                 nextState = nextStates[0]
                 for i, w in enumerate(weights):
-                    weights[i] += ALPHA * (nextState.score + RL(nextState).evaluate() - RL(initState).evaluate())
+                    weights[i] += ALPHA * (nextState.score + QL(nextState).evaluate() - QL(initState).evaluate())
 
         # pick best action based on updated value
         for rotateN in range(4):
@@ -111,15 +111,15 @@ class TetrisRL(TetrisApp):
                 action = (rotateN, x)
                 nextStates = initState.nextStates(action)
                 if len(nextStates):
-                    score = RL(nextStates[0]).score
+                    score = QL(nextStates[0]).score
                     if score > bestScore:
                         bestScore, bestAction = score, action
 
         if not self.gameOver:
             for _ in range(bestAction[0]):
-                self.rotate_stone()
+                self.rotateStone()
             self.move(bestAction[1] - self.stone_x)
-            self.insta_drop()
+            self.instantDrop()
             print(weights)
 
 

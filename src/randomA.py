@@ -5,7 +5,7 @@ from random import randrange as rand
 class TetrisRandom(TetrisApp):
     def bestMoves(self):
         for _ in range(rand(4)):
-            self.rotate_stone()
+            self.rotateStone()
 
         if rand(2):
             for _ in range(rand(6)):
@@ -14,7 +14,7 @@ class TetrisRandom(TetrisApp):
             for _ in range(rand(6)):
                 self.move(+1)
 
-        self.insta_drop()
+        self.instantDrop()
 
 
 if __name__ == '__main__':
