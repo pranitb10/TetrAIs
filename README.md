@@ -1,2 +1,2 @@
-# SmarTetris
-CS5100 Artificial Intelligence FInal Project
+# TetrAIs
+CS5100 Artificial Intelligence Final Project - Prof. Chris Amato
